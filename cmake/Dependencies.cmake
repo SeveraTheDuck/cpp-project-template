@@ -1,0 +1,22 @@
+include_guard(GLOBAL)
+include(FetchContent)
+
+function(setup_gtest)
+    if(TARGET GTest::gtest_main)
+        return()
+    endif()
+
+    find_package(GTest CONFIG QUIET)
+    if(GTest_FOUND)
+        message(STATUS "Using system GTest")
+        return()
+    endif()
+
+    message(STATUS "Fetching GTest via FetchContent...")
+    FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+    )
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+endfunction()

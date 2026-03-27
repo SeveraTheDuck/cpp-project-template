@@ -1,0 +1,18 @@
+set(TGT "${PRJ_NAME}_lib")
+
+add_library(${TGT} STATIC)
+add_library(${PRJ_NAMESPACE}::${PRJ_NAME} ALIAS ${TGT})
+
+set_target_properties(${TGT} PROPERTIES LINKER_LANGUAGE CXX)
+target_standard_setup(${TGT})
+
+if(PROJECT_IS_TOP_LEVEL)
+  include(GNUInstallDirs) 
+  
+  install(TARGETS ${TGT} EXPORT ${PRJ_NAME}Targets
+      ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
+      FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  )
+endif()

@@ -4,6 +4,7 @@ Checks: >
   google-*, hicpp-*, misc-*, modernize-*, performance-*,
   portability-*,readability-*,
   -bugprone-easily-swappable-parameters,
+  -bugprone-exception-escape,
   -cppcoreguidelines-owning-memory,
   -google-readability-todo,
   -misc-no-recursion,
