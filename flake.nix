@@ -22,7 +22,7 @@
 
             llvm.clang        # clang, clang++
             gcc               # gcc, g++
-            
+
             llvm.clang-tools  # clang-format, clang-tidy, clangd
             cmake-format
             editorconfig-checker

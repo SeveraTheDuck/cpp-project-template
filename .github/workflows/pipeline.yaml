@@ -80,7 +80,7 @@ jobs:
             else
               export CC=gcc; export CXX=g++
             fi
-            
+
             export CCACHE_DIR=$PWD/.ccache
             export CCACHE_MAXSIZE=500M
 
