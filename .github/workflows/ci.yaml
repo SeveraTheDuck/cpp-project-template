@@ -2,12 +2,9 @@ name: CI Pipeline
 
 on:
   push:
-    branches:
-      - "**"
-
+    branches: ["**"]
   pull_request:
-    branches:
-      - "main"
+    branches: ["main"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -26,9 +23,14 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+        with:
+          use_flakehub: false
 
       - name: Setup Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Generate Compilation Database
+        run: nix develop --command cmake --preset dev
 
       - name: Run pre-commit hooks
         run: nix develop --command pre-commit run --all-files
@@ -46,6 +48,8 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+        with:
+          use_flakehub: false
 
       - name: Setup Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
