@@ -1,4 +1,4 @@
-# C++23 Modern Project Template
+# C++ Project Template
 
 By **SeveraTheDuck** 🦆
 
