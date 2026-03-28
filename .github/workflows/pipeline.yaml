@@ -83,21 +83,21 @@ jobs:
             export CCACHE_DIR=$PWD/.ccache
             export CCACHE_MAXSIZE=500M
 
-            EXTRA_ARGS='-DCMAKE_CXX_CLANG_TIDY=\"\"'
+            COMMON_ARGS=\"-DCMAKE_CXX_CLANG_TIDY=OFF -DCMAKE_CXX_SCAN_FOR_MODULES=OFF\"
 
             echo '--- Building: Dev ---'
-            cmake --preset dev $EXTRA_ARGS
-            cmake --build --preset dev
+            cmake --preset dev $COMMON_ARGS
+            cmake --build --preset dev -j$(nproc)
             ctest --test-dir build/dev --output-on-failure -j$(nproc)
 
             echo '--- Building: ASan + UBSan ---'
-            cmake --preset asan $EXTRA_ARGS
-            cmake --build --preset asan
+            cmake --preset asan $COMMON_ARGS
+            cmake --build --preset asan -j$(nproc)
             ctest --test-dir build/asan --output-on-failure -j$(nproc)
 
             echo '--- Building: Release + LTO ---'
-            cmake --preset release $EXTRA_ARGS
-            cmake --build --preset release
+            cmake --preset release $COMMON_ARGS
+            cmake --build --preset release -j$(nproc)
           "
 
   docs:
