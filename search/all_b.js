@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['project_20structure_0',['Project Structure',['../index.html#autotoc_md6',1,'']]],
-  ['project_20template_1',['C++23 Modern Project Template',['../index.html',1,'']]]
+  ['quick_20start_0',['Quick Start',['../index.html#autotoc_md8',1,'']]]
 ];

@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['setup_0',['1. Environment Setup',['../index.html#autotoc_md9',1,'']]],
-  ['stack_1',['Tech Stack',['../index.html#autotoc_md4',1,'']]],
-  ['start_2',['Quick Start',['../index.html#autotoc_md8',1,'']]],
-  ['structure_3',['Project Structure',['../index.html#autotoc_md6',1,'']]]
+  ['tech_20stack_0',['Tech Stack',['../index.html#autotoc_md4',1,'']]],
+  ['template_1',['C++ Project Template',['../index.html',1,'']]],
+  ['test_2',['2. Build &amp;amp; Test',['../index.html#autotoc_md10',1,'']]]
 ];

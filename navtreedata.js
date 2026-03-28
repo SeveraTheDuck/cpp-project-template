@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "C++23 Template Project", "index.html", [
-    [ "C++23 Modern Project Template", "index.html", "index" ],
+    [ "C++ Project Template", "index.html", "index" ],
     [ "Files", "files.html", [
       [ "File List", "files.html", "files_dup" ]
     ] ]
