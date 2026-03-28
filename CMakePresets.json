@@ -10,7 +10,8 @@
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "CMAKE_CXX_STANDARD": "23",
                 "CMAKE_CXX_STANDARD_REQUIRED": "ON",
-                "CMAKE_CXX_EXTENSIONS": "OFF"
+                "CMAKE_CXX_EXTENSIONS": "OFF",
+                "CMAKE_CXX_SCAN_FOR_MODULES": "OFF"
             }
         },
         {
@@ -18,7 +19,6 @@
             "inherits": "base",
             "displayName": "Development (Debug)",
             "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_BUILD_TYPE": "Debug"
             }
         },

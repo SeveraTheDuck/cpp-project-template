@@ -83,7 +83,7 @@ jobs:
             export CCACHE_DIR=$PWD/.ccache
             export CCACHE_MAXSIZE=500M
 
-            COMMON_ARGS=\"-DCMAKE_CXX_CLANG_TIDY=OFF -DCMAKE_CXX_SCAN_FOR_MODULES=OFF\"
+            FLAGS='-DCMAKE_CXX_CLANG_TIDY=OFF -DCMAKE_CXX_SCAN_FOR_MODULES=OFF'
 
             echo '--- Building: Dev ---'
             cmake --preset dev $COMMON_ARGS

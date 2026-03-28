@@ -1,4 +1,4 @@
-name: "CodeQL Security Analysis"
+name: "CodeQL Analysis"
 
 on:
   push:
@@ -45,8 +45,8 @@ jobs:
       - name: Build Project
         run: |
           nix develop --command bash -c "
-            cmake --preset dev
-            cmake --build --preset dev
+            cmake --preset dev -DCMAKE_CXX_CLANG_TIDY=OFF -DCMAKE_CXX_SCAN_FOR_MODULES=OFF
+            cmake --build --preset dev -j$(nproc)
           "
 
       - name: Perform CodeQL Analysis
