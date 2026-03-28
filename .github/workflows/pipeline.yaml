@@ -19,7 +19,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
@@ -109,7 +109,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
