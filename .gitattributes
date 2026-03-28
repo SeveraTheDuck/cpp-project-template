@@ -19,4 +19,4 @@ CMakeLists.txt text eol=lf
 third_party/** linguist-vendored
 external/** linguist-vendored
 build/** linguist-generated
-docs/html/** linguist-generated
+docs/** linguist-generated

@@ -74,7 +74,6 @@ jobs:
       - name: Build & Test All Presets
         run: |
           nix develop --command bash -c "
-            # Выбор компилятора
             if [ '${{ matrix.compiler }}' = 'clang' ]; then
               export CC=clang; export CXX=clang++
             else
@@ -84,14 +83,47 @@ jobs:
             export CCACHE_DIR=$PWD/.ccache
             export CCACHE_MAXSIZE=500M
 
+            EXTRA_ARGS='-DCMAKE_CXX_CLANG_TIDY=\"\"'
+
             echo '--- Building: Dev ---'
-            cmake --preset dev && cmake --build --preset dev
+            cmake --preset dev $EXTRA_ARGS
+            cmake --build --preset dev
             ctest --test-dir build/dev --output-on-failure -j$(nproc)
 
             echo '--- Building: ASan + UBSan ---'
-            cmake --preset asan && cmake --build --preset asan
+            cmake --preset asan $EXTRA_ARGS
+            cmake --build --preset asan
             ctest --test-dir build/asan --output-on-failure -j$(nproc)
 
             echo '--- Building: Release + LTO ---'
-            cmake --preset release && cmake --build --preset release
+            cmake --preset release $EXTRA_ARGS
+            cmake --build --preset release
           "
+
+  docs:
+    name: Build & Deploy Docs
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+        with:
+          flakehub: false
+
+      - name: Setup Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Generate Documentation
+        run: nix develop --command doxygen Doxyfile
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs_output/html

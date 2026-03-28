@@ -29,6 +29,9 @@
             pre-commit
 
             gtest
+
+            doxygen
+            graphviz
           ];
 
           shellHook = ''
