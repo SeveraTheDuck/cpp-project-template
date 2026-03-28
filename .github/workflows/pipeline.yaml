@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   lint:
-    name: Code Quality (pre-commit)
+    name: Code Quality
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -28,6 +28,8 @@ jobs:
 
       - name: Setup Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          use-flakehub: false
 
       - name: Generate Compilation Database
         run: nix develop --command cmake --preset dev
@@ -36,12 +38,18 @@ jobs:
         run: nix develop --command pre-commit run --all-files
 
   build-and-test:
-    name: Build & Test
+    name: Build (${{ matrix.compiler }})
     needs: lint
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [clang, gcc]
+
     permissions:
       id-token: write
       contents: read
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -53,40 +61,37 @@ jobs:
 
       - name: Setup Magic Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          use-flakehub: false
 
       - name: Setup ccache caching
         uses: actions/cache@v4
         with:
           path: .ccache
-          key: ccache-linux-${{ github.sha }}
-          restore-keys: |
-            ccache-linux-
+          key: ccache-${{ matrix.compiler }}-${{ github.sha }}
+          restore-keys: ccache-${{ matrix.compiler }}-
 
-      - name: Configure ccache environment
-        run: |
-          echo "CCACHE_DIR=$PWD/.ccache" >> $GITHUB_ENV
-          echo "CCACHE_COMPRESS=1" >> $GITHUB_ENV
-          echo "CCACHE_MAXSIZE=500M" >> $GITHUB_ENV
-
-      - name: Build & Test (Dev Preset)
+      - name: Build & Test All Presets
         run: |
           nix develop --command bash -c "
-            cmake --preset dev
-            cmake --build --preset dev
+            # Выбор компилятора
+            if [ '${{ matrix.compiler }}' = 'clang' ]; then
+              export CC=clang; export CXX=clang++
+            else
+              export CC=gcc; export CXX=g++
+            fi
+            
+            export CCACHE_DIR=$PWD/.ccache
+            export CCACHE_MAXSIZE=500M
+
+            echo '--- Building: Dev ---'
+            cmake --preset dev && cmake --build --preset dev
             ctest --test-dir build/dev --output-on-failure -j$(nproc)
-          "
 
-      - name: Build & Test (ASan + UBSan Preset)
-        run: |
-          nix develop --command bash -c "
-            cmake --preset asan
-            cmake --build --preset asan
+            echo '--- Building: ASan + UBSan ---'
+            cmake --preset asan && cmake --build --preset asan
             ctest --test-dir build/asan --output-on-failure -j$(nproc)
-          "
 
-      - name: Build (Release + LTO Preset)
-        run: |
-          nix develop --command bash -c "
-            cmake --preset release
-            cmake --build --preset release
+            echo '--- Building: Release + LTO ---'
+            cmake --preset release && cmake --build --preset release
           "
