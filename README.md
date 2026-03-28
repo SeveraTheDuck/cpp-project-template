@@ -4,8 +4,6 @@ By **SeveraTheDuck** 🦆
 
 This template utilizes **Nix Flakes** for deterministic environments and a **CI/CD pipeline** to ensure industrial-grade code quality.
 
-[![Pipeline Status](https://github.com/SeveraTheDuck/cpp-project-template/actions/workflows/pipeline.yml/badge.svg)](https://github.com/SeveraTheDuck/cpp-project-template/actions)
-[![Security Analysis](https://github.com/SeveraTheDuck/cpp-project-template/actions/workflows/codeql.yml/badge.svg)](https://github.com/SeveraTheDuck/cpp-project-template/actions)
 ![C++ Standard](https://img.shields.io/badge/C%2B%2B-23-blue.svg)
 ![Build System](https://img.shields.io/badge/CMake-3.28%2B-green.svg)
 ![Environment](https://img.shields.io/badge/Nix-Flakes-orange.svg)
