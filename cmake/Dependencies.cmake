@@ -14,7 +14,7 @@ function(setup_gtest)
 
   message(STATUS "Fetching GTest via FetchContent...")
   fetchcontent_declare(
-    googletest URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+    googletest URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.tar.gz
   )
   set(gtest_force_shared_crt
       ON
