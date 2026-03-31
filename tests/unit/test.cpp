@@ -1,5 +1,7 @@
 #include <engine/hello/hello.hpp>
 
-int main() {
-  hello::Print();
+#include <gtest/gtest.h>
+
+TEST(HelloTest, PrintDoesNotCrash) {
+  EXPECT_NO_THROW(hello::Print());
 }

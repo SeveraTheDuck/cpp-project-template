@@ -38,13 +38,14 @@ jobs:
         run: nix develop --command pre-commit run --all-files
 
   build-and-test:
-    name: Build (${{ matrix.compiler }})
+    name: Build (${{ matrix.compiler }}, ${{ matrix.preset }})
     needs: lint
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         compiler: [clang, gcc]
+        preset: [dev, asan, release]
 
     permissions:
       id-token: write
@@ -68,10 +69,10 @@ jobs:
         uses: actions/cache@v5
         with:
           path: .ccache
-          key: ccache-${{ matrix.compiler }}-${{ github.sha }}
-          restore-keys: ccache-${{ matrix.compiler }}-
+          key: ccache-${{ matrix.compiler }}-${{ matrix.preset }}-${{ github.sha }}
+          restore-keys: ccache-${{ matrix.compiler }}-${{ matrix.preset }}-
 
-      - name: Build & Test All Presets
+      - name: Build & Test (${{ matrix.preset }})
         run: |
           nix develop --command bash -c "
             if [ '${{ matrix.compiler }}' = 'clang' ]; then
@@ -80,24 +81,16 @@ jobs:
               export CC=gcc; export CXX=g++
             fi
 
-            export CCACHE_DIR=$PWD/.ccache
+            export CCACHE_DIR=\$PWD/.ccache
             export CCACHE_MAXSIZE=500M
 
             FLAGS='-DCMAKE_CXX_CLANG_TIDY=OFF -DCMAKE_CXX_SCAN_FOR_MODULES=OFF'
 
-            echo '--- Building: Dev ---'
-            cmake --preset dev $COMMON_ARGS
-            cmake --build --preset dev -j$(nproc)
-            ctest --test-dir build/dev --output-on-failure -j$(nproc)
+            echo '--- Building: ${{ matrix.preset }} ---'
+            cmake --preset ${{ matrix.preset }} \$FLAGS
+            cmake --build --preset ${{ matrix.preset }} -j\$(nproc)
 
-            echo '--- Building: ASan + UBSan ---'
-            cmake --preset asan $COMMON_ARGS
-            cmake --build --preset asan -j$(nproc)
-            ctest --test-dir build/asan --output-on-failure -j$(nproc)
-
-            echo '--- Building: Release + LTO ---'
-            cmake --preset release $COMMON_ARGS
-            cmake --build --preset release -j$(nproc)
+            ctest --test-dir build/${{ matrix.preset }} --output-on-failure -j\$(nproc)
           "
 
   docs:

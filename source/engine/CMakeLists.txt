@@ -1,6 +1,6 @@
 set(TGT "${PRJ_NAME}_lib")
 
-add_library(${TGT} STATIC)
+add_library(${TGT})
 add_library(${PRJ_NAMESPACE}::${PRJ_NAME} ALIAS ${TGT})
 
 set_target_properties(${TGT} PROPERTIES LINKER_LANGUAGE CXX)
