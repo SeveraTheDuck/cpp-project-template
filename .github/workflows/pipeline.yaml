@@ -72,26 +72,26 @@ jobs:
           key: ccache-${{ matrix.compiler }}-${{ matrix.preset }}-${{ github.sha }}
           restore-keys: ccache-${{ matrix.compiler }}-${{ matrix.preset }}-
 
-      - name: Build & Test (${{ matrix.preset }})
+      - name: Configure CMake (${{ matrix.preset }})
+        env:
+          CC: ${{ matrix.compiler == 'clang' && 'clang' || 'gcc' }}
+          CXX: ${{ matrix.compiler == 'clang' && 'clang++' || 'g++' }}
         run: |
-          nix develop --command bash -c "
-            if [ '${{ matrix.compiler }}' = 'clang' ]; then
-              export CC=clang; export CXX=clang++
-            else
-              export CC=gcc; export CXX=g++
-            fi
+          nix develop --command cmake --preset ${{ matrix.preset }} -DCMAKE_CXX_CLANG_TIDY=OFF -DCMAKE_CXX_SCAN_FOR_MODULES=OFF
 
-            export CCACHE_DIR=\$PWD/.ccache
-            export CCACHE_MAXSIZE=500M
+      - name: Build (${{ matrix.preset }})
+        env:
+          CC: ${{ matrix.compiler == 'clang' && 'clang' || 'gcc' }}
+          CXX: ${{ matrix.compiler == 'clang' && 'clang++' || 'g++' }}
+          CCACHE_DIR: ${{ github.workspace }}/.ccache
+          CCACHE_MAXSIZE: 500M
+        run: |
+          nix develop --command cmake --build --preset ${{ matrix.preset }} -j$(nproc)
 
-            FLAGS='-DCMAKE_CXX_CLANG_TIDY=OFF -DCMAKE_CXX_SCAN_FOR_MODULES=OFF'
+      - name: Run Tests (${{ matrix.preset }})
+        run: |
+          nix develop --command ctest --test-dir build/${{ matrix.preset }} --output-on-failure -j$(nproc)
 
-            echo '--- Building: ${{ matrix.preset }} ---'
-            cmake --preset ${{ matrix.preset }} \$FLAGS
-            cmake --build --preset ${{ matrix.preset }} -j\$(nproc)
-
-            ctest --test-dir build/${{ matrix.preset }} --output-on-failure -j\$(nproc)
-          "
 
   docs:
     name: Build & Deploy Docs
