@@ -127,13 +127,11 @@
     },
     {
       "name": "ci-debug",
-      "hidden": true,
       "inherits": "base-debug",
       "displayName": "CI Debug"
     },
     {
       "name": "ci-asan",
-      "hidden": true,
       "inherits": [
         "base-debug",
         "base-asan"
@@ -142,7 +140,6 @@
     },
     {
       "name": "ci-tsan",
-      "hidden": true,
       "inherits": "base-debug",
       "displayName": "CI TSan",
       "cacheVariables": {
@@ -151,7 +148,6 @@
     },
     {
       "name": "ci-release",
-      "hidden": true,
       "inherits": "base-release",
       "displayName": "CI Release"
     }
