@@ -126,15 +126,34 @@
       }
     },
     {
-      "name": "ci",
+      "name": "ci-debug",
+      "hidden": true,
+      "inherits": "base-debug",
+      "displayName": "CI Debug"
+    },
+    {
+      "name": "ci-asan",
+      "hidden": true,
       "inherits": [
-        "base-release",
+        "base-debug",
         "base-asan"
       ],
-      "displayName": "CI (Release + ASan + clang-tidy)",
+      "displayName": "CI ASan + UBSan"
+    },
+    {
+      "name": "ci-tsan",
+      "hidden": true,
+      "inherits": "base-debug",
+      "displayName": "CI TSan",
       "cacheVariables": {
-        "project_name_ENABLE_CLANG_TIDY": "ON"
+        "project_name_ENABLE_TSAN": "ON"
       }
+    },
+    {
+      "name": "ci-release",
+      "hidden": true,
+      "inherits": "base-release",
+      "displayName": "CI Release"
     }
   ],
   "buildPresets": [
@@ -179,8 +198,20 @@
       "configurePreset": "release-shared"
     },
     {
-      "name": "ci",
-      "configurePreset": "ci"
+      "name": "ci-debug",
+      "configurePreset": "ci-debug"
+    },
+    {
+      "name": "ci-asan",
+      "configurePreset": "ci-asan"
+    },
+    {
+      "name": "ci-tsan",
+      "configurePreset": "ci-tsan"
+    },
+    {
+      "name": "ci-release",
+      "configurePreset": "ci-release"
     }
   ],
   "testPresets": [
@@ -230,9 +261,24 @@
       "configurePreset": "release"
     },
     {
-      "name": "ci",
+      "name": "ci-debug",
       "inherits": "base-test",
-      "configurePreset": "ci"
+      "configurePreset": "ci-debug"
+    },
+    {
+      "name": "ci-asan",
+      "inherits": "base-test",
+      "configurePreset": "ci-asan"
+    },
+    {
+      "name": "ci-tsan",
+      "inherits": "base-test",
+      "configurePreset": "ci-tsan"
+    },
+    {
+      "name": "ci-release",
+      "inherits": "base-test",
+      "configurePreset": "ci-release"
     }
   ]
 }

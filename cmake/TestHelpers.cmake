@@ -24,5 +24,5 @@ function(add_project_test TARGET_NAME)
   apply_standard_settings(${TARGET_NAME})
   apply_sanitizers(${TARGET_NAME})
 
-  gtest_discover_tests(${TARGET_NAME} DISCOVERY_MODE PRE_TEST)
+  gtest_discover_tests(${TARGET_NAME} DISCOVERY_MODE PRE_TEST PROPERTIES LABELS ${TARGET_NAME})
 endfunction()
