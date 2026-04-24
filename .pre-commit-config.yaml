@@ -1,6 +1,6 @@
 ---
-default_install_hook_types: [ pre-push ]
-default_stages: [ pre-push ]
+default_install_hook_types: [ pre-commit ]
+default_stages: [ pre-commit ]
 
 exclude: ^docs/|^docs_output/
 
@@ -18,13 +18,15 @@ repos:
     rev: 3.6.1
     hooks:
       - id: editorconfig-checker
-        # clang-format already checks C++ files
+        # clang-format already checks C++ files, cmake-format checks CMake files
         exclude: |
           (?x)^(
             LICENSE|
             .*\.md|
             .*\.cpp|
-            .*\.hpp
+            .*\.hpp|
+            .*\.cmake|
+            CMakeLists\.txt
           )$
 
   - repo: https://github.com/cheshirekow/cmake-format-precommit
@@ -32,6 +34,14 @@ repos:
     hooks:
       - id: cmake-format
         additional_dependencies: [ pyyaml ]
+
+  - repo: local
+    hooks:
+      - id: nixfmt
+        name: nixfmt
+        language: system
+        entry: nixfmt
+        files: \.nix$
 
   - repo: https://github.com/pocc/pre-commit-hooks
     rev: v1.3.5
@@ -42,8 +52,3 @@ repos:
       - id: clang-tidy
         args: [ "-p=.", "--warnings-as-errors=*" ]
         exclude: ^(third_party|external)/.*$
-
-  - repo: https://github.com/NixOS/nixfmt
-    rev: v1.2.0
-    hooks:
-      - id: nixfmt

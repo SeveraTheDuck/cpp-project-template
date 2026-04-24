@@ -3,39 +3,42 @@
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-  outputs = { self, nixpkgs }:
+  outputs =
+    { self, nixpkgs }:
     let
       supportedSystems = import ./nix/systems.nix;
-      forAllSystems     = nixpkgs.lib.genAttrs supportedSystems;
-      nixpkgsFor        = forAllSystems (system: import nixpkgs { inherit system; });
+      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; });
     in
     {
       formatter = forAllSystems (system: nixpkgsFor.${system}.nixfmt);
 
-      devShells = forAllSystems (system:
+      devShells = forAllSystems (
+        system:
         let
-          pkgs           = nixpkgsFor.${system};
-          llvm           = pkgs.llvmPackages_latest;
+          pkgs = nixpkgsFor.${system};
+          llvm = pkgs.llvmPackages_latest;
           commonPackages = import ./nix/commonPackages.nix { inherit pkgs llvm; };
-          mkCppShell     = import ./nix/mkCppShell.nix { inherit pkgs llvm commonPackages; };
+          mkCppShell = import ./nix/mkCppShell.nix { inherit pkgs llvm commonPackages; };
         in
         {
           clang = mkCppShell {
             stdenv = llvm.stdenv;
-            CC     = "${llvm.clang}/bin/clang";
-            CXX    = "${llvm.clang}/bin/clang++";
-            name   = "clang";
+            CC = "${llvm.clang}/bin/clang";
+            CXX = "${llvm.clang}/bin/clang++";
+            name = "clang";
           };
 
           gcc = mkCppShell {
-            stdenv        = pkgs.gcc15Stdenv;
-            CC            = "${pkgs.gcc15}/bin/gcc";
-            CXX           = "${pkgs.gcc15}/bin/g++";
+            stdenv = pkgs.gcc15Stdenv;
+            CC = "${pkgs.gcc15}/bin/gcc";
+            CXX = "${pkgs.gcc15}/bin/g++";
             extraPackages = [ pkgs.gcc15 ];
-            name          = "gcc";
+            name = "gcc";
           };
 
           default = self.devShells.${system}.clang;
-        });
+        }
+      );
     };
 }
