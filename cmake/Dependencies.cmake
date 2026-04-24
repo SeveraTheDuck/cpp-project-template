@@ -8,13 +8,14 @@ function(setup_gtest)
 
   find_package(GTest CONFIG QUIET)
   if(GTest_FOUND)
-    message(STATUS "Using system GTest")
+    message(STATUS "[${PROJECT_NAME}] Using system GTest")
     return()
   endif()
 
-  message(STATUS "Fetching GTest via FetchContent...")
+  message(STATUS "[${PROJECT_NAME}] Fetching GTest via FetchContent...")
   fetchcontent_declare(
-    googletest URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.tar.gz
+    googletest URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.tar.gz
+                   EXCLUDE_FROM_ALL SYSTEM
   )
   set(gtest_force_shared_crt
       ON

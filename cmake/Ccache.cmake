@@ -1,8 +1,7 @@
 include_guard(GLOBAL)
 
 macro(setup_ccache)
-  option(ENABLE_CCACHE "Use ccache" ON)
-  if(ENABLE_CCACHE)
+  if(${PROJECT_NAME}_ENABLE_CCACHE)
     find_program(CCACHE_PROGRAM ccache)
     if(CCACHE_PROGRAM)
       set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")

@@ -1,4 +1,4 @@
-#include <engine/hello/hello.hpp>
+#include <project_name/hello/hello.hpp>
 
 #include <gtest/gtest.h>
 

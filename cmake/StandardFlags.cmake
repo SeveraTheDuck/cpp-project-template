@@ -4,13 +4,8 @@ include(CheckIPOSupported)
 function(apply_standard_settings TARGET_NAME)
   get_target_logical_scope(${TARGET_NAME} SCOPE)
 
-  if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 23)
-  endif()
+  target_compile_features(${TARGET_NAME} ${SCOPE} "cxx_std_${${PROJECT_NAME}_CXX_STANDARD}")
 
-  target_compile_features(${TARGET_NAME} ${SCOPE} "cxx_std_${CMAKE_CXX_STANDARD}")
-
-  # Warnings
   target_compile_options(
     ${TARGET_NAME}
     ${SCOPE}
@@ -21,17 +16,22 @@ function(apply_standard_settings TARGET_NAME)
     -Wconversion
     -Wshadow
     -fstack-protector-strong
-    $<$<CONFIG:Release>:-D_FORTIFY_SOURCE=2>
+    $<$<NOT:$<CONFIG:Release>>:-fno-omit-frame-pointer>
     >
-    $<$<CXX_COMPILER_ID:MSVC>:/W4
-    /permissive->
   )
 
-  # LTO (IPO)
-  if(ENABLE_LTO)
+  target_compile_definitions(
+    ${TARGET_NAME} ${SCOPE} $<$<AND:$<CXX_COMPILER_ID:Clang,AppleClang,GNU>,$<CONFIG:Release>>:
+                   _FORTIFY_SOURCE=2 >
+  )
+
+  if(${PROJECT_NAME}_ENABLE_LTO)
     check_ipo_supported(RESULT ipo_supported)
     if(ipo_supported)
-      set_target_properties(${TARGET_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
+      set_target_properties(
+        ${TARGET_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION_RELEASE ON
+                                  INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO ON
+      )
     endif()
   endif()
 endfunction()
