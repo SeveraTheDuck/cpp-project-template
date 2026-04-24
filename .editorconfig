@@ -17,3 +17,6 @@ indent_size = 4
 [docs/**]
 insert_final_newline = false
 trim_trailing_whitespace = false
+
+[*.json]
+insert_final_newline = true

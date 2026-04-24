@@ -1,6 +1,6 @@
 ---
-default_install_hook_types: [pre-push]
-default_stages: [pre-push]
+default_install_hook_types: [ pre-push ]
+default_stages: [ pre-push ]
 
 exclude: ^docs/|^docs_output/
 
@@ -12,26 +12,33 @@ repos:
       - id: end-of-file-fixer
       - id: check-added-large-files
       - id: mixed-line-ending
-        args: ['--fix=lf']
+        args: [ "--fix=lf" ]
 
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
     rev: 3.6.1
     hooks:
       - id: editorconfig-checker
-        exclude: LICENSE|\.md$
+        # clang-format already checks C++ files
+        exclude: |
+          (?x)^(
+            LICENSE|
+            .*\.md|
+            .*\.cpp|
+            .*\.hpp
+          )$
 
   - repo: https://github.com/cheshirekow/cmake-format-precommit
     rev: v0.6.13
     hooks:
       - id: cmake-format
-        additional_dependencies: [pyyaml]
+        additional_dependencies: [ pyyaml ]
 
   - repo: https://github.com/pocc/pre-commit-hooks
     rev: v1.3.5
     hooks:
       - id: clang-format
-        args: ["-i"]
+        args: [ "-i" ]
 
       - id: clang-tidy
-        args: ["-p=.", "--warnings-as-errors=*"]
+        args: [ "-p=.", "--warnings-as-errors=*" ]
         exclude: ^(third_party|external)/.*$
