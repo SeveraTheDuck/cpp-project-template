@@ -42,3 +42,8 @@ repos:
       - id: clang-tidy
         args: [ "-p=.", "--warnings-as-errors=*" ]
         exclude: ^(third_party|external)/.*$
+
+  - repo: https://github.com/NixOS/nixfmt
+    rev: v1.2.0
+    hooks:
+      - id: nixfmt

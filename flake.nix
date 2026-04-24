@@ -1,50 +1,41 @@
 {
-  description = "C++23 Template Environment (Linux Only)";
+  description = "C++ Template Environment";
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
-  };
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-        llvm = pkgs.llvmPackages_latest;
-        gcc = pkgs.gcc14;
-      in
-      {
-        devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            cmake
-            ninja
-            ccache
+  outputs = { self, nixpkgs }:
+    let
+      supportedSystems = import ./nix/systems.nix;
+      forAllSystems     = nixpkgs.lib.genAttrs supportedSystems;
+      nixpkgsFor        = forAllSystems (system: import nixpkgs { inherit system; });
+    in
+    {
+      formatter = forAllSystems (system: nixpkgsFor.${system}.nixfmt);
 
-            llvm.clang        # clang, clang++
-            gcc               # gcc, g++
+      devShells = forAllSystems (system:
+        let
+          pkgs           = nixpkgsFor.${system};
+          llvm           = pkgs.llvmPackages_latest;
+          commonPackages = import ./nix/commonPackages.nix { inherit pkgs llvm; };
+          mkCppShell     = import ./nix/mkCppShell.nix { inherit pkgs llvm commonPackages; };
+        in
+        {
+          clang = mkCppShell {
+            stdenv = llvm.stdenv;
+            CC     = "${llvm.clang}/bin/clang";
+            CXX    = "${llvm.clang}/bin/clang++";
+            name   = "clang";
+          };
 
-            llvm.clang-tools  # clang-format, clang-tidy, clangd
-            cmake-format
-            editorconfig-checker
-            pre-commit
+          gcc = mkCppShell {
+            stdenv        = pkgs.gcc15Stdenv;
+            CC            = "${pkgs.gcc15}/bin/gcc";
+            CXX           = "${pkgs.gcc15}/bin/g++";
+            extraPackages = [ pkgs.gcc15 ];
+            name          = "gcc";
+          };
 
-            gtest
-
-            doxygen
-            graphviz
-          ];
-
-          shellHook = ''
-            echo "C++23 Environment Loaded"
-            echo "Clang: $(clang++ -dumpversion)"
-            echo "GCC:   $(g++ -dumpversion)"
-            echo "CMake: $(cmake --version | head -n 1 | awk '{print $3}')"
-
-            if [ -d .git ]; then
-              pre-commit install --hook-type pre-push > /dev/null
-            fi
-          '';
-        };
-      }
-    );
+          default = self.devShells.${system}.clang;
+        });
+    };
 }
